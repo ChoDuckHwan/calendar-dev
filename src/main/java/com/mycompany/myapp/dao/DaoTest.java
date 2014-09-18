@@ -137,7 +137,7 @@ public class DaoTest {
 		NewEvent1.setOwner(calendarUserDao.getUser(1));
 		NewEvent1.setAttendee(calendarUserDao.getUser(2));
 		eventDao.createEvent(NewEvent1);
-
+		int extraEventId1 = FindEventId(NewEvent1, eventDao);
 
 		Robot tRobot = new Robot();
 		tRobot.delay(1000);
@@ -149,8 +149,6 @@ public class DaoTest {
 		NewEvent2.setOwner(calendarUserDao.getUser(2));
 		NewEvent2.setAttendee(calendarUserDao.getUser(1));
 		eventDao.createEvent(NewEvent2);
-		
-		int extraEventId1 = FindEventId(NewEvent1, eventDao);
 		int extraEventId2 = FindEventId(NewEvent2, eventDao);
 		
 		// 7. 추출된 id와 함께 새로운 Event 2개를 DB에서 가져와 (getEvent 메소드 사용) 방금 추가한 2개의
