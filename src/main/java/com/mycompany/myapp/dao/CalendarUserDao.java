@@ -6,11 +6,13 @@ import java.util.List;
 import com.mycompany.myapp.domain.CalendarUser;
 
 public interface CalendarUserDao {
-    CalendarUser getUser(int id) throws ClassNotFoundException, SQLException;
+	CalendarUser getUser(int id) throws ClassNotFoundException, SQLException;
 
-    CalendarUser findUserByEmail(String email);
+	CalendarUser findUserByEmail(String email) throws SQLException,
+			ClassNotFoundException;
 
-    List<CalendarUser> findUsersByEmail(String partialEmail);
+	List<CalendarUser> findUsersByEmail(String partialEmail);
 
-    int createUser(CalendarUser user);
+	int createUser(CalendarUser user) throws SQLException,
+			ClassNotFoundException;
 }

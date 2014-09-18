@@ -7,11 +7,12 @@ import com.mycompany.myapp.domain.Event;
 
 public interface EventDao {
 
-    Event getEvent(int eventId) throws SQLException, ClassNotFoundException;
+	Event getEvent(int eventId) throws SQLException, ClassNotFoundException;
 
-    int createEvent(Event event);
+	int createEvent(Event event) throws SQLException, ClassNotFoundException;
 
-    List<Event> findForUser(int userId);
+	List<Event> findForUser(int userId) throws SQLException,
+			ClassNotFoundException;
 
-    List<Event> getEvents();
+	List<Event> getEvents() throws SQLException, ClassNotFoundException;
 }
