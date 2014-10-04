@@ -2,6 +2,10 @@ package com.mycompany.myapp.domain;
 
 import java.util.Calendar;
 
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+
 /*
  * create table `events` (
     `id` int(32) unsigned not null auto_increment,
@@ -24,11 +28,38 @@ public class Event {
     private String description;
     private CalendarUser owner;
     private CalendarUser attendee;
+	private JdbcTemplate jdbcTemplate;
+	private DataSource dataSource;
 
-    public Integer getId() {
-        return id;
-    }
-    
+    public void setDataSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		this.dataSource = dataSource;
+	}
+	
+	public Event(){}
+	
+	public Event(int id, Calendar when, String summary, String description, CalendarUser owner,
+			CalendarUser attendee)
+	{
+		this.id 		 = id;
+		this.when 		 = when;
+		this.summary 	 = summary;
+		this.description = description;
+		this.owner		 = owner;
+		this.attendee 	 = attendee;
+	}
+	public Event(Calendar when, String summary, String description, CalendarUser owner,
+			CalendarUser attendee)
+	{
+		this.when 		 = when;
+		this.summary 	 = summary;
+		this.description = description;
+		this.owner		 = owner;
+		this.attendee 	 = attendee;
+	}
+	public Integer getId() {
+		return id;
+	}
     public Calendar getWhen() {
         return when;
     }

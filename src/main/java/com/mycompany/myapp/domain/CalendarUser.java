@@ -16,7 +16,24 @@ public class CalendarUser {
     private String password;
     private String name;
 
-    public Integer getId() {
+    public CalendarUser(int id, String email, String password, String name)
+	{
+		this.id 	  = id;
+		this.email    = email;
+		this.password = password;
+		this.name     = name;
+	}
+	
+	public CalendarUser(String email, String password, String name)
+	{
+		this.email    = email;
+		this.password = password;
+		this.name     = name;
+	}
+	
+	public CalendarUser(){}
+
+	public Integer getId() {
         return id;
     }
 

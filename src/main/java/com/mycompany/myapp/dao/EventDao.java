@@ -15,4 +15,5 @@ public interface EventDao {
     public List<Event> getEvents();
     
     public void deleteAll();
+
 }
