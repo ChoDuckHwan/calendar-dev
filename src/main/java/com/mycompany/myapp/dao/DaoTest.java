@@ -1,173 +1,133 @@
 package com.mycompany.myapp.dao;
 
-import java.awt.AWTException;
-import java.awt.Robot;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 import com.mycompany.myapp.domain.CalendarUser;
 import com.mycompany.myapp.domain.Event;
 
-public class DaoTest {
-
-	private static void ShowCalendarUser(CalendarUserDao calendarUserDao,
-			int userCount) throws ClassNotFoundException, SQLException {
-		for (int i = 1; i < userCount + 1; i++) {
-			CalendarUser test = calendarUserDao.getUser(i);
-			System.out.println("id    : " + test.getId());
-			System.out.println("Name  : " + test.getName());
-			System.out.println("Email : " + test.getEmail());
-			System.out.println("+++++++++++++++++++++++++");
-			if (i == userCount) {
-				System.out.println("======CalendarUser정보 출력 끝======");
-			}
-		}
-	}
-
-	private static int FindEventId(Event EventInput, EventDao eventDao) throws SQLException, ClassNotFoundException
-	{
-		int EventId = 0;
-		List<Event> temp = eventDao.findForUser(EventInput.getOwner().getId());
+public class DaoTest { 
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		ApplicationContext context = new GenericXmlApplicationContext("com/mycompany/myapp/applicationContext.xml");;
 		
-		ArrayList<Integer> t = new ArrayList<Integer>(); 
-		
-		for(int i = 0; i < temp.size(); i++)
-		{
-			t.add(temp.get(i).getId());
-		}
-		
-		Collections.sort(t);
-		
-		EventId = t.get(t.size() - 1);
-		return EventId;
-	}
-	private static void ShowEvent(EventDao eventDao, int EventCount)
-			throws SQLException, ClassNotFoundException {
-
-		for (int i = 100; i < EventCount + 100; i++) {
-			Event EventTest = eventDao.getEvent(i);
-			System.out.println("Owner : " + EventTest.getOwner().getName());
-			System.out.println("Email : " + EventTest.getAttendee().getEmail());
-			System.out.println("----------------------");
-			if (i == EventCount + 99) {
-				System.out.println("======Event정보 출력 끝======");
-			}
-		}
-	}
-
-	public static void main(String[] args) throws ClassNotFoundException,
-			SQLException, AWTException {
-		ApplicationContext context = new GenericXmlApplicationContext(
-				"com/mycompany/myapp/applicationContext.xml");
-
-		CalendarUserDao calendarUserDao = context.getBean("userDao",
-				JdbcCalendarUserDao.class);
+		CalendarUserDao calendarUserDao = context.getBean("calendarUserDao", JdbcCalendarUserDao.class);
 		EventDao eventDao = context.getBean("eventDao", JdbcEventDao.class);
-
-		// 1. 디폴트로 등록된 CalendarUser 3명 출력 (패스워드 제외한 모든 내용 출력)
-
-		System.out.println("+++++++++++++++++++++++++");
-		System.out.println("Default 등록 CalendarUser ");
-		ShowCalendarUser(calendarUserDao, 3);
-		System.out.println("+++++++++++++++++++++++++");
-
-		// 2. 디폴트로 등록된 Event 3개 출력 (owner와 attendee는 해당 사용자의 이메일과 이름을 출력)
-
-		System.out.println("+++++++++++++++++++++++++");
-		System.out.println("Default 등록 Event");
-		ShowEvent(eventDao, 3);
-		System.out.println("+++++++++++++++++++++++++");
-
-		// 3. 새로운 CalendarUser 2명 등록 및 각각 id 추출
-		CalendarUser NewUser1 = new CalendarUser();
-		NewUser1.setEmail("NewUser1@email.com");
-		NewUser1.setName("NewUserTest1");
-		NewUser1.setPassword("NewUserPassWord1!");
-		calendarUserDao.createUser(NewUser1);
-		int extractId1 = calendarUserDao.findUserByEmail(NewUser1.getEmail())
-				.getId();
-
-		CalendarUser NewUser2 = new CalendarUser();
-		NewUser2.setEmail("NewUser2@email.com");
-		NewUser2.setName("NewUserTest2");
-		NewUser2.setPassword("NewUserPassWord2!");
-		calendarUserDao.createUser(NewUser2);
-		int extractId2 = calendarUserDao.findUserByEmail(NewUser2.getEmail())
-				.getId();
-
-		// 4. 추출된 id와 함께 새로운 CalendarUser 2명을 DB에서 가져와 (getUser 메소드 사용) 방금 등록된
-		// 2명의 사용자와 내용 (이메일, 이름, 패스워드)이 일치하는 지 비교
-		if (NewUser1.getEmail().equals(
-				calendarUserDao.getUser(extractId1).getEmail())
-				&& NewUser1.getName().equals(
-						calendarUserDao.getUser(extractId1).getName())
-				&& NewUser1.getPassword().equals(
-						calendarUserDao.getUser(extractId1).getPassword())) {
-			System.out.println("추출된 id" + extractId1 + "의 내용이 일치 합니다.");
+		
+		//1. 디폴트로 등록된 CalendarUser 3명 출력 (패스워드 제외한 모든 내용 출력)
+		System.out.println("1. ---------------------------------------------------------");
+		for(int i=1; i<=3; i++)
+		{
+			CalendarUser calendarUser = calendarUserDao.getUser(i);
+			System.out.println("id: "+calendarUser.getId() + "\temail: " + calendarUser.getEmail() + "\tname: " + calendarUser.getName());			
 		}
-
-		if (NewUser2.getEmail().equals(
-				calendarUserDao.getUser(extractId2).getEmail())
-				&& NewUser2.getName().equals(
-						calendarUserDao.getUser(extractId2).getName())
-				&& NewUser2.getPassword().equals(
-						calendarUserDao.getUser(extractId2).getPassword())) {
-			System.out.println("추출된 id" + extractId2 + "의 내용이 일치 합니다.");
+		//2. 디폴트로 등록된 Event 3개 출력 (owner와 attendee는 해당 사용자의 이메일과 이름을 출력)
+		System.out.println("\n2. ---------------------------------------------------------");
+		List<Event> events = eventDao.getEvents();
+		for(Event event: events)
+		{
+			System.out.println("id: " +event.getId()+"\nwhen: "+ event.getWhen().getTime() +"\nsummary :" +event.getSummary()+"\ndescription :"+event.getDescription());
+			System.out.println("owner\n- email: " +event.getOwner().getEmail()+"\tname: "+event.getOwner().getName());
+			System.out.println("attendee\n- email: " +event.getAttendee().getEmail()+"\tname: "+event.getAttendee().getName()+"\n");
 		}
-		// 5. 5명의 CalendarUser 모두 출력 (패스워드 제외한 모든 내용 출력)
-		System.out.println("\n+++++++++++++++++++++++++++++++++++++");
-		System.out.println("-------5명의  CalendarUser 출력-------");
-		ShowCalendarUser(calendarUserDao, 5);
-
-		// 6. 새로운 Event 2개 등록 및 각각 id 추출
-		Calendar NewTime1 = Calendar.getInstance();
-		Event NewEvent1 = new Event();
-		NewEvent1.setWhen(NewTime1);
-		NewEvent1.setSummary("EventSummary1");
-		NewEvent1.setDescription("EventDescription1");
-		NewEvent1.setOwner(calendarUserDao.getUser(1));
-		NewEvent1.setAttendee(calendarUserDao.getUser(2));
-		eventDao.createEvent(NewEvent1);
-		int extraEventId1 = FindEventId(NewEvent1, eventDao);
-
-		Robot tRobot = new Robot();
-		tRobot.delay(1000);
-		Calendar NewTime2 = Calendar.getInstance();
-		Event NewEvent2 = new Event();
-		NewEvent1.setWhen(NewTime2);
-		NewEvent2.setSummary("EventSummary2");
-		NewEvent2.setDescription("EventDescription2");
-		NewEvent2.setOwner(calendarUserDao.getUser(2));
-		NewEvent2.setAttendee(calendarUserDao.getUser(1));
-		eventDao.createEvent(NewEvent2);
-		int extraEventId2 = FindEventId(NewEvent2, eventDao);
 		
-		// 7. 추출된 id와 함께 새로운 Event 2개를 DB에서 가져와 (getEvent 메소드 사용) 방금 추가한 2개의
-		// 이벤트와 내용 (when, summary, description, owner, attendee)이 일치하는 지 비교
+		//3. 새로운 CalendarUser 2명 등록 및 각각 id 추출
+		System.out.println("3. ---------------------------------------------------------");
+		CalendarUser createUser1 = new CalendarUser();
+		CalendarUser createUser2 = new CalendarUser();
+		int createUser1Id;
+		int createUser2Id;
 		
-		if(NewEvent1.getSummary().equals(eventDao.getEvent(extraEventId1).getSummary())
-				&& NewEvent1.getDescription().equals(eventDao.getEvent(extraEventId1).getDescription())
-				&& NewEvent1.getOwner().equals(eventDao.getEvent(extraEventId1).getOwner())
-				&& NewEvent1.getAttendee().equals(eventDao.getEvent(extraEventId1).getAttendee())){
-			System.out.println(extraEventId1+"의 Summary, Owner, description, Attendee 동일합니다");
-					}
+		createUser1.setEmail("createUser1@spring.book");
+		createUser1.setPassword("createUser1");
+		createUser1.setName("createUser1");
+		createUser2.setEmail("createUser2@spring.book");
+		createUser2.setPassword("createUser2");
+		createUser2.setName("createUser2");
 		
-		if(NewEvent2.getSummary().equals(eventDao.getEvent(extraEventId2).getSummary())
-				&& NewEvent2.getDescription().equals(eventDao.getEvent(extraEventId2).getDescription())
-				&& NewEvent2.getOwner().equals(eventDao.getEvent(extraEventId2).getOwner())
-				&& NewEvent2.getAttendee().equals(eventDao.getEvent(extraEventId2).getAttendee())){
-			System.out.println(extraEventId2+"의 Summary, Owner, description, Attendee 동일합니다");
-					}
-		// 8. 5개의 Event 모두 출력 (owner와 attendee는 해당 사용자의 이메일과 이름을 출력)
-		ShowEvent(eventDao,5);
+		createUser1Id = calendarUserDao.createUser(createUser1);
+		createUser2Id = calendarUserDao.createUser(createUser2);
+		
+		System.out.println("createUser1 Id: "+createUser1Id);
+		System.out.println("createUser2 Id: "+createUser2Id);
+		
+		//4. 추출된 id와 함께 새로운 CalendarUser 2명을 DB에서 가져와 (getUser 메소드 사용) 방금 등록된 2명의 사용자와 내용 (이메일, 이름, 패스워드)이 일치하는 지 비교
+		System.out.println("\n4. ---------------------------------------------------------");
+		CalendarUser getCreateUser1 = calendarUserDao.getUser(createUser1Id);
+		CalendarUser getCreateUser2 = calendarUserDao.getUser(createUser2Id);
+		if(createUser1.getEmail().equals(getCreateUser1.getEmail()) && createUser1.getName().equals(getCreateUser1.getName()) && createUser1.getPassword().equals(getCreateUser1.getPassword()))
+			System.out.println("createUser1 일치");
+		else
+			System.out.println("createUser1 불일치");
+		if(createUser2.getEmail().equals(getCreateUser2.getEmail()) && createUser2.getName().equals(getCreateUser2.getName()) && createUser2.getPassword().equals(getCreateUser2.getPassword()))
+			System.out.println("createUser2 일치");
+		else
+			System.out.println("createUser2 불일치");
+		
+		//5. 5명의 CalendarUser 모두 출력 (패스워드 제외한 모든 내용 출력)
+		System.out.println("\n5. ---------------------------------------------------------");
+		List<CalendarUser> calendarUsers = calendarUserDao.findUsersByEmail(null);
+		for(CalendarUser calendarUser: calendarUsers)
+		{
+			System.out.println("id: "+calendarUser.getId() + "\temail: " + calendarUser.getEmail() + "\tname: " + calendarUser.getName());			
+		}
+		
+		//6. 새로운 Event 2개 등록 및 각각 id 추출
+		System.out.println("\n6. ---------------------------------------------------------");
+		Event createEvent1 = new Event();
+		Event createEvent2 = new Event();
+		int createEvent1Id;
+		int createEvent2Id;
+		
+		createEvent1.setWhen(Calendar.getInstance());
+		createEvent1.setSummary("event1 - summary");
+		createEvent1.setDescription("event1 - description");
+		createEvent1.setOwner(calendarUserDao.getUser(1));
+		createEvent1.setAttendee(calendarUserDao.getUser(2));
+		
+		createEvent2.setWhen(Calendar.getInstance());
+		createEvent2.setSummary("event2 - summary");
+		createEvent2.setDescription("event2 - description");
+		createEvent2.setOwner(calendarUserDao.getUser(3));
+		createEvent2.setAttendee(calendarUserDao.getUser(1));
+		
+		createEvent1Id = eventDao.createEvent(createEvent1);
+		createEvent2Id = eventDao.createEvent(createEvent2);
+		
+		System.out.println("createEvent1 Id: "+createEvent1Id);
+		System.out.println("createEvent2 Id: "+createEvent2Id);
+		
+		//7. 추출된 id와 함께 새로운 Event 2개를 DB에서 가져와 (getEvent 메소드 사용) 방금 추가한 2개의 이벤트와 내용 (when, summary, description, owner, attendee)이 일치하는 지 비교
+		System.out.println("\n7. ---------------------------------------------------------");
+		Event getCreateEvent1 = eventDao.getEvent(createEvent1Id);
+		Event getCreateEvent2 = eventDao.getEvent(createEvent2Id);
+		
+		if(createEvent1.getWhen().getTime().compareTo(getCreateEvent1.getWhen().getTime())==0)
+			System.out.println("equls비교");
+		
+		System.out.println(createEvent1.getWhen().getTime());
+		System.out.println(getCreateEvent1.getWhen().getTime());
+		
+		if(createEvent1.getWhen().getTime().compareTo(getCreateEvent1.getWhen().getTime())==0 && createEvent1.getSummary().equals(getCreateEvent1.getSummary()) && createEvent1.getDescription().equals(getCreateEvent1.getDescription()) && createEvent1.getOwner().equals(getCreateEvent1.getOwner()) && createEvent1.getAttendee().equals(getCreateEvent1.getAttendee()))
+			System.out.println("createEvent1 일치");
+		else
+			System.out.println("createEvent1 불일치");
+		if(createEvent2.getWhen().getTime().compareTo(getCreateEvent2.getWhen().getTime())==0 && createEvent2.getSummary().equals(getCreateEvent2.getSummary()) && createEvent2.getDescription().equals(getCreateEvent2.getDescription()) && createEvent2.getOwner().equals(getCreateEvent2.getOwner()) && createEvent2.getAttendee().equals(getCreateEvent2.getAttendee()))
+			System.out.println("createEvent2 일치");
+		else
+			System.out.println("createEvent2 불일치");
+		
+		//8. 5개의 Event 모두 출력 (owner와 attendee는 해당 사용자의 이메일과 이름을 출력)
+		System.out.println("\n8. ---------------------------------------------------------");
+		List<Event> events8 = eventDao.getEvents();
+		for(Event event: events8)
+		{
+			System.out.println("id: " +event.getId()+"\nwhen: "+ event.getWhen().getTime() +"\nsummary :" +event.getSummary()+"\ndescription :"+event.getDescription());
+			System.out.println("owner\n- email: " +event.getOwner().getEmail()+"\tname: "+event.getOwner().getName());
+			System.out.println("attendee\n- email: " +event.getAttendee().getEmail()+"\tname: "+event.getAttendee().getName()+"\n");
+		}
 	}
 }

@@ -1,18 +1,19 @@
 package com.mycompany.myapp.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.mycompany.myapp.domain.Event;
 
 public interface EventDao {
 
-	Event getEvent(int eventId) throws SQLException, ClassNotFoundException;
+    public Event getEvent(int eventId);
 
-	int createEvent(Event event) throws SQLException, ClassNotFoundException;
+    public int createEvent(Event event);
 
-	List<Event> findForUser(int userId) throws SQLException,
-			ClassNotFoundException;
+    public List<Event> findForOwner(int ownerUserId);
 
-	List<Event> getEvents() throws SQLException, ClassNotFoundException;
+    public List<Event> getEvents();
+    
+    public void deleteAll();
+
 }
