@@ -2,64 +2,37 @@ package com.mycompany.myapp.domain;
 
 import java.util.Calendar;
 
-import javax.sql.DataSource;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-
-/*
- * create table `events` (
-    `id` int(32) unsigned not null auto_increment,
-    `when` timestamp not null,
-    `summary` varchar(255) not null,
-    `description` varchar(500) not null,
-    `owner` int(32) unsigned not null,
-    `attendee` int(32) unsigned not null,
-    PRIMARY KEY (`id`),
-    KEY `fk_events_owner` (`owner`),
-    KEY `fk_events_attendee` (`attendee`),
-    CONSTRAINT `constraints_events_owner` FOREIGN KEY (`owner`) REFERENCES `calendar_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `constraints_events_attendee` FOREIGN KEY (`attendee`) REFERENCES `calendar_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8;
-*/
 public class Event {
     private Integer id;
     private Calendar when;
     private String summary;
     private String description;
     private CalendarUser owner;
-    private CalendarUser attendee;
-	private JdbcTemplate jdbcTemplate;
-	private DataSource dataSource;
+    private int numLikes;                     /* Updated by Assignment 3 */
+    private EventLevel eventLevel;            /* Updated by Assignment 3 */
 
-    public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-		this.dataSource = dataSource;
+    /* Updated by Assignment 3 - Start */
+    public int getNumLikes() {
+		return numLikes;
+	}
+
+	public void setNumLikes(int numLikes) {
+		this.numLikes = numLikes;
 	}
 	
-	public Event(){}
-	
-	public Event(int id, Calendar when, String summary, String description, CalendarUser owner,
-			CalendarUser attendee)
-	{
-		this.id 		 = id;
-		this.when 		 = when;
-		this.summary 	 = summary;
-		this.description = description;
-		this.owner		 = owner;
-		this.attendee 	 = attendee;
+	public EventLevel getEventLevel() {
+		return eventLevel;
 	}
-	public Event(Calendar when, String summary, String description, CalendarUser owner,
-			CalendarUser attendee)
-	{
-		this.when 		 = when;
-		this.summary 	 = summary;
-		this.description = description;
-		this.owner		 = owner;
-		this.attendee 	 = attendee;
-	}
+
+	public void setEventLevel(EventLevel eventLevel) {
+		this.eventLevel = eventLevel;
+	}	
+    /* Updated by Assignment 3 - End */
+    
 	public Integer getId() {
-		return id;
-	}
+        return id;
+    }
+    
     public Calendar getWhen() {
         return when;
     }
@@ -75,11 +48,6 @@ public class Event {
     public CalendarUser getOwner() {
         return owner;
     }
-
-    public CalendarUser getAttendee() {
-        return attendee;
-    }
-
 
     public void setId(Integer id) {
         this.id = id;
@@ -100,10 +68,15 @@ public class Event {
     public void setOwner(CalendarUser owner) {
         this.owner = owner;
     }
-
-    public void setAttendee(CalendarUser attendee) {
-        this.attendee = attendee;
-    }
+    
+	public void upgradeLevel() {
+		EventLevel nextLevel = this.eventLevel.nextLevel();
+		if (nextLevel == null) {
+			throw new IllegalStateException(this.eventLevel+ "is not able to be upgraded."); 
+		} else {
+			this.eventLevel = nextLevel;
+		}
+	}
 
     @Override
     public int hashCode() {
